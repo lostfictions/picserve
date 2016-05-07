@@ -1,0 +1,17 @@
+{
+  "name": "hgscrape",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.0.0-rc.4",
+    "fs-extra": "^0.30.0",
+    "lodash": "^4.11.2",
+    "x-ray": "^2.3.0"
+  }
+}
