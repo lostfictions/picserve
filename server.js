@@ -31,6 +31,16 @@ app.get('/imagelist', (req, res) => {
 app.get('/open/:file', (req, res) => {
   const p = path.join(imagesFolder, req.params.file)
   if(fs.existsSync(p)) {
+    opn(p, {app: 'nautilus'})
+    res.status(200).end()
+  }
+  else {
+    res.status(500).end()
+  }
+})
+app.get('/view/:file', (req, res) => {
+  const p = path.join(imagesFolder, req.params.file)
+  if(fs.existsSync(p)) {
     opn(p)
     res.status(200).end()
   }

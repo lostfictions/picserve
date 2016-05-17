@@ -153,10 +153,18 @@
         },
         {},
         {
-          title: 'Open in viewer',
+          title: 'Reveal in file browser',
           fn: () => {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/open/' + i.getAttribute('title'), true);
+            xhr.send()
+          }
+        },
+        {
+          title: 'Open in viewer',
+          fn: () => {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/view/' + i.getAttribute('title'), true);
             xhr.send()
           }
         },
