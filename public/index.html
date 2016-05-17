@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="basiccontext/basicContext.min.css">
-	<link rel="stylesheet" href="basiccontext/themes/default.min.css">
+	<link rel="stylesheet" href="basiccontext/themes/dark.min.css">
   <link rel="stylesheet" href="basiccontext/addons/fadein.min.css">
   <style>
     body {
@@ -65,7 +65,7 @@
     var imgs
     var ind = 0
     var cover = false
-    var doSlideshow = true
+    var doSlideshow = false
     var slideshowTimeout
 
     document.onmousemove = updateSlideshowTimeout
@@ -136,7 +136,7 @@
       updateCover()
       updateSlideshowTimeout()
       i.setAttribute('src', imgs[ind])
-      i.setAttribute('title', imgs[ind].substr('/images/'.length).split('/').join(' - '))
+      i.setAttribute('title', imgs[ind].substr('/images/'.length))
     }
 
     i.addEventListener('click', nextImage)
@@ -150,7 +150,16 @@
         {
           title: (cover ? 'Shrink' : 'Expand') + ' Image',
           fn: () => { cover = !cover; updateCover() }
-        }
+        },
+        {},
+        {
+          title: 'Open in viewer',
+          fn: () => {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/open/' + i.getAttribute('title'), true);
+            xhr.send()
+          }
+        },
 			]
 			basicContext.show(items, e)
 		})
