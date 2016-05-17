@@ -3,36 +3,28 @@
 
 const PORT = 3000
 
-// const async = require('async')
-// const _ = require('lodash')
-// const fs = require('fs-extra')
-// const logger = require('morgan')
-
+const _ = require('lodash')
 const path = require('path')
 const opn = require('opn')
 const express = require('express')
 const chokidar = require('chokidar')
 
-const randomIn = (arr) => arr[Math.floor(Math.random() * arr.length)]
-
 const imagesFolder = path.join(process.env.HOME, 'Pictures')
 const imagePaths = []
 
 const watcher = chokidar.watch(imagesFolder, {
-  ignored: '!*.{png,tiff,jpg,jpeg,gif}'
+  ignored: ['**/*.zip']
 })
 
-watcher.on('add', p => imagePaths.push(p))
+watcher.on('add', p => imagePaths.push(path.join('/images', p.substr(imagesFolder.length))))
 watcher.on('ready', () => opn('http://localhost:' + PORT))
 
 const app = express()
-// app.use(logger('tiny'))
 app.use(express.static('public'))
-
-app.get('/image', (req, res) => {
-  const img = randomIn(imagePaths)
-  console.log(img)
-  res.sendFile(img)
+app.use('/images', express.static(imagesFolder))
+app.get('/imagelist', (req, res) => {
+  const imgs = _.shuffle(imagePaths)
+  res.jsonp(imgs)
 })
 
 app.listen(PORT)

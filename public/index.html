@@ -1,6 +1,5 @@
 <!doctype html>
 <html class="no-js" lang="">
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -12,14 +11,11 @@
       background: #000;
       color: #fff;
       position: absolute;
-      overflow: hidden;
+      overflow-x: hidden;
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: Arial;
     }
 
@@ -30,15 +26,9 @@
     }
 
     .wrapper img {
+      /*width: 100%;*/
       width: 100vw;
-      height: 100vh;
       object-fit: contain;
-    }
-
-    .wrapper .caption {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 20px;
     }
 
     .wrapper a {
@@ -46,71 +36,59 @@
       text-decoration: none;
     }
 
-    .helper {
-      position: absolute;
-      /*left: 10px;*/
-      right: 10px;
-      top: 10px;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    ::-webkit-scrollbar {
+      width: 3px;
     }
 
-    .btn {
-      border-radius: 10px;
-      font-family: Arial;
-      color: #dbdbdb;
-      background: #1c1c1c;
-      padding: 6px 6px 6px 6px;
-      text-decoration: none;
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     }
 
-    .btn-sm {
-      font-size: 10px;
-    }
-
-    .btn-lg {
-      font-size: 20px;
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,0,255,0.5);
     }
   </style>
 </head>
 
 <body>
   <div class="wrapper">
-    <a>
-      <!--<div class="caption"></div>-->
-      <img src="/image">
-    </a>
+    <!--<a>-->
+      <img>
+    <!--</a>-->
   </div>
-  <!--<div class="helper">-->
-    <!--<a class="btn btn-sm" id="undo" href="#">Undo</a>-->
-    <!--<a class="btn btn-lg" id="new" href="#">Another</a>-->
-  <!--</div>-->
   <script>
-    // var qs = document.querySelector.bind(document)
-    // var i = qs('.wrapper img')
+    var slideshowWaitTime = 5000
+
+    var i = document.querySelector('.wrapper img')
     // var link = qs('.wrapper a')
-    // var cap = qs('.wrapper .caption')
+    var imgs
+    var ind = 0
+    var cover = false
+    var doSlideshow = true
+    var slideshowTimeout
 
-    // var game = {}
-    // var hist = []
-
-    // var n = qs('#new')
-    // n.onclick = function(e) { e.preventDefault(); newImage() }
-
-    // var u = qs('#undo')
-    // u.onclick = function(e) { e.preventDefault(); undo() }
-
-    // newImage()
+    document.onmousemove = updateSlideshowTimeout
 
     window.addEventListener("keydown", function(event) {
       if(event.defaultPrevented) {
         return
       }
       switch(event.code) {
+        case "ArrowLeft":
+          prevImage()
+          break
         case "Space":
-          newImage()
+        case "ArrowRight":
+          nextImage()
+          break
+        case "KeyC":
+          cover = !cover
+          updateCover()
+          break
+        case "KeyP":
+          doSlideshow = !doSlideshow
+          console.log("Slideshow: " + (doSlideshow ? 'ON' : 'OFF'))
+          updateSlideshowTimeout()
           break
         default:
           return
@@ -118,28 +96,51 @@
       event.preventDefault()
     }, true)
 
-    function newImage() {
-      window.location.reload()
-      // hist.push(game)
-      // game = randomInArray(games)
-      // i.setAttribute('src', game.img)
-      // link.setAttribute('href', game.uri)
-      // cap.textContent = game.name
+    function handleImageList(imageList) {
+      imgs = imageList
+      updateImage()
     }
 
-    function undo() {
-      // if(hist.length <= 1) {
-        // return
-      // }
-
-      // var h = hist.pop()
-      // i.setAttribute('src', h.img)
-      // link.setAttribute('href', h.uri)
-      // cap.textContent = h.name
+    function nextImage() {
+      ind = ind + 1
+      if(ind >= imgs.length) {
+        ind = 0
+      }
+      updateImage()
     }
 
-    // function randomInArray(arr) { return arr[Math.floor(Math.random() * arr.length)] }
+    function prevImage() {
+      ind = ind - 1
+      if(ind < 0) {
+        ind = imgs.length - 1
+      }
+      updateImage()
+    }
+
+    function updateSlideshowTimeout() {
+      if(slideshowTimeout) {
+        clearTimeout(slideshowTimeout)
+        slideshowTimeout = undefined
+      }
+      if(doSlideshow) {
+        console.log('setting timeout....')
+        slideshowTimeout = setTimeout(function() { slideshowTimeout = undefined; nextImage() }, slideshowWaitTime)
+      }
+    }
+
+    function updateCover() {
+      i.style.height = cover ? 'inherit' : '100vh'
+    }
+
+    function updateImage() {
+      cover = false
+      updateCover()
+      updateSlideshowTimeout()
+      i.setAttribute('src', imgs[ind])
+      i.setAttribute('title', imgs[ind].substr('/images/'.length).split('/').join(' - '))
+    }
   </script>
+  <script type="application/javascript" src="/imagelist?callback=handleImageList"></script>
 </body>
 
 </html>
