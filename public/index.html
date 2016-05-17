@@ -6,6 +6,9 @@
   <title>Here are some things</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="basiccontext/basicContext.min.css">
+	<link rel="stylesheet" href="basiccontext/themes/default.min.css">
+  <link rel="stylesheet" href="basiccontext/addons/fadein.min.css">
   <style>
     body {
       background: #000;
@@ -52,15 +55,13 @@
 
 <body>
   <div class="wrapper">
-    <!--<a>-->
-      <img>
-    <!--</a>-->
+    <img>
   </div>
+  <script src="basiccontext/basicContext.min.js"></script>
   <script>
     var slideshowWaitTime = 5000
 
     var i = document.querySelector('.wrapper img')
-    // var link = qs('.wrapper a')
     var imgs
     var ind = 0
     var cover = false
@@ -87,7 +88,6 @@
           break
         case "KeyP":
           doSlideshow = !doSlideshow
-          console.log("Slideshow: " + (doSlideshow ? 'ON' : 'OFF'))
           updateSlideshowTimeout()
           break
         default:
@@ -123,7 +123,6 @@
         slideshowTimeout = undefined
       }
       if(doSlideshow) {
-        console.log('setting timeout....')
         slideshowTimeout = setTimeout(function() { slideshowTimeout = undefined; nextImage() }, slideshowWaitTime)
       }
     }
@@ -139,6 +138,22 @@
       i.setAttribute('src', imgs[ind])
       i.setAttribute('title', imgs[ind].substr('/images/'.length).split('/').join(' - '))
     }
+
+    i.addEventListener('click', nextImage)
+
+    i.addEventListener('contextmenu', function(e) {
+			var items = [
+				{
+          title: (doSlideshow ? 'Disable' : 'Enable') + ' Slideshow',
+          fn: () => { doSlideshow = !doSlideshow; updateSlideshowTimeout() }
+        },
+        {
+          title: (cover ? 'Shrink' : 'Expand') + ' Image',
+          fn: () => { cover = !cover; updateCover() }
+        }
+			]
+			basicContext.show(items, e)
+		})
   </script>
   <script type="application/javascript" src="/imagelist?callback=handleImageList"></script>
 </body>
