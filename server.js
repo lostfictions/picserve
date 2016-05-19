@@ -9,8 +9,10 @@ const path = require('path')
 const opn = require('opn')
 const express = require('express')
 const chokidar = require('chokidar')
-
 const fs = require('fs')
+
+const imgsearch = require('./imgsearch')
+
 
 const imagesFolder = path.join(process.env.HOME, 'Pictures')
 const imagePaths = []
@@ -30,7 +32,7 @@ app.get('/imagelist', (req, res) => {
   res.jsonp(imgs)
 })
 app.get('/open/:file', (req, res) => {
-  const p = path.join(imagesFolder, req.params.file)
+  const p = path.join(imagesFolder, decodeURIComponent(req.params.file))
   if(fs.existsSync(p)) {
     opn(p, {app: 'nautilus'})
     res.status(200).end()
@@ -40,10 +42,21 @@ app.get('/open/:file', (req, res) => {
   }
 })
 app.get('/view/:file', (req, res) => {
-  const p = path.join(imagesFolder, req.params.file)
+  const p = path.join(imagesFolder, decodeURIComponent(req.params.file))
   if(fs.existsSync(p)) {
     opn(p)
     res.status(200).end()
+  }
+  else {
+    res.status(500).end()
+  }
+})
+app.get('/search/:file', (req, res) => {
+  const p = path.join(imagesFolder, decodeURIComponent(req.params.file))
+  if(fs.existsSync(p)) {
+    imgsearch(p)
+      .then(uri => { opn(uri); res.status(200).end() })
+      .catch(err => { console.error("Error searching for image: " + err); res.status(500).end() })
   }
   else {
     res.status(500).end()
