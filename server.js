@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*eslint semi: ["error", "never"], strict: 0*/
 'use strict'
 

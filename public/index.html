@@ -22,6 +22,15 @@
       font-family: Arial;
     }
 
+    body.checkered {
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, #666 25%, transparent 25%,transparent 75%, #666 75%, #666 100%),
+        linear-gradient(45deg, #666 25%, transparent 25%,transparent 75%, #666 75%, #666 100%);
+      background-size:20px 20px;
+      background-position:0 0, 10px 10px;
+    }
+
     .wrapper {
       display: flex;
       align-items: center;
@@ -59,6 +68,10 @@
   </div>
   <script src="basiccontext/basicContext.min.js"></script>
   <script>
+    /*eslint semi: ["error", "never"], strict: 0, no-var: 0*/
+    /*global basicContext:false */
+    'use strict'
+
     var slideshowWaitTime = 5000
 
     var i = document.querySelector('.wrapper img')
@@ -90,13 +103,23 @@
           doSlideshow = !doSlideshow
           updateSlideshowTimeout()
           break
+        case "KeyT":
+          document.body.classList.toggle('checkered')
+          break
+        case "Minus":
+          if(slideshowWaitTime > 400) {
+            slideshowWaitTime -= 200
+          }
+          break
+        case "Equal":
+          slideshowWaitTime += 200
+          break
         default:
           return
       }
-      event.preventDefault()
     }, true)
 
-    function handleImageList(imageList) {
+    function handleImageList(imageList) { //eslint-disable-line no-unused-vars
       imgs = imageList
       updateImage()
     }
@@ -142,8 +165,8 @@
     i.addEventListener('click', nextImage)
 
     i.addEventListener('contextmenu', function(e) {
-			var items = [
-				{
+      var items = [
+        {
           title: (doSlideshow ? 'Disable' : 'Enable') + ' Slideshow',
           fn: () => { doSlideshow = !doSlideshow; updateSlideshowTimeout() }
         },
@@ -151,26 +174,30 @@
           title: (cover ? 'Shrink' : 'Expand') + ' Image',
           fn: () => { cover = !cover; updateCover() }
         },
+        {
+          title: 'Change Background Style',
+          fn: () => { document.body.classList.toggle('checkered') }
+        },
         {},
         {
           title: 'Reveal in file browser',
           fn: () => {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/open/' + i.getAttribute('title'), true);
+            var xhr = new XMLHttpRequest()
+            xhr.open('GET', '/open/' + i.getAttribute('title'), true)
             xhr.send()
           }
         },
         {
           title: 'Open in viewer',
           fn: () => {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/view/' + i.getAttribute('title'), true);
+            var xhr = new XMLHttpRequest()
+            xhr.open('GET', '/view/' + i.getAttribute('title'), true)
             xhr.send()
           }
-        },
-			]
-			basicContext.show(items, e)
-		})
+        }
+      ]
+      basicContext.show(items, e)
+    })
   </script>
   <script type="application/javascript" src="/imagelist?callback=handleImageList"></script>
 </body>
