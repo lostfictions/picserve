@@ -13,8 +13,11 @@ const fs = require('fs')
 
 const imgsearch = require('./imgsearch')
 
+const argv = require('minimist')(process.argv.slice(2))
 
-const imagesFolder = path.join(process.env.HOME, 'Pictures')
+const imagesFolder = argv._.length > 0 ?
+  path.resolve(argv._[0]) :
+  path.join(process.env.HOME, 'Pictures')
 const imagePaths = []
 
 const watcher = chokidar.watch(imagesFolder, {
@@ -25,7 +28,7 @@ watcher.on('add', p => imagePaths.push(path.join('/images', p.substr(imagesFolde
 watcher.on('ready', () => opn('http://localhost:' + PORT))
 
 const app = express()
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use('/images', express.static(imagesFolder))
 app.get('/imagelist', (req, res) => {
   const imgs = _.shuffle(imagePaths)
